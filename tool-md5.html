@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MD5 DỰ Đoán Tool</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #001f33;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+    .container {
+      margin: 20px;
+      padding: 20px;
+      border: 3px solid #00ff00;
+      border-radius: 16px;
+      box-shadow: 0 0 20px #00ff00;
+      position: relative;
+    }
+    .input-box {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+    }
+    .predict-btn {
+      display: block;
+      margin: 0 auto 20px auto;
+      padding: 14px 30px;
+      font-size: 22px;
+      font-weight: bold;
+      background-color: #00cc66;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      box-shadow: 0 0 20px #0f0;
+      cursor: pointer;
+    }
+    .result-circles {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .tai { background-color: black; color: white; }
+    .xiu { background-color: white; color: black; }
+    .active { box-shadow: 0 0 25px 5px #00ff00; animation: blink 0.4s infinite alternate; }
+    @keyframes blink {
+      0% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+    .output {
+      text-align: center;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .history {
+      font-size: 12px;
+      background-color: rgba(255,255,255,0.1);
+      padding: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: red;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+    }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #0f0;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="delete-btn" onclick="confirmClear()">X</div>
+    <div class="copy-btn" onclick="copyResult()">📋</div><input type="text" id="md5input" class="input-box" placeholder="Nhập mã MD5...">
+
+<button class="predict-btn" onclick="predict()">DỰ ĐOÁN</button>
+
+<div class="result-circles">
+  <div class="circle tai" id="taiCircle">Tài</div>
+  <div class="circle xiu" id="xiuCircle">Xỉu</div>
+</div>
+
+<div class="output" id="output"></div>
+<div class="history" id="history"></div>
+
+  </div>  <script>
+    function predict() {
+      const md5 = document.getElementById("md5input").value.trim();
+      if (!md5) return;
+
+      // Cải tiến thuật toán
+      const val = parseInt(md5.slice(-6), 16);
+      const sum = (val % 16) + 3; // 3 đến 18
+      const result = sum >= 11 ? "Tài" : "Xỉu";
+      const percent = Math.floor((sum - 3) / 15 * 100);
+      const dice = generateDice(sum);
+
+      document.getElementById("output").innerHTML = `${result} ${sum} <br> ${percent}% (${dice.join(',')})`;
+
+      document.getElementById("taiCircle").classList.remove("active");
+      document.getElementById("xiuCircle").classList.remove("active");
+      if (result === "Tài") {
+        document.getElementById("taiCircle").classList.add("active");
+      } else {
+        document.getElementById("xiuCircle").classList.add("active");
+      }
+
+      const historyDiv = document.getElementById("history");
+      const row = `${md5} → ${result} ${sum} (${dice.join(',')})`;
+      historyDiv.innerHTML = row + '<br>' + historyDiv.innerHTML;
+
+      document.getElementById("md5input").value = "";
+    }
+
+    function generateDice(sum) {
+      for (let i = 1; i <= 6; i++) {
+        for (let j = 1; j <= 6; j++) {
+          for (let k = 1; k <= 6; k++) {
+            if (i + j + k === sum) return [i, j, k];
+          }
+        }
+      }
+      return [1, 1, 1];
+    }
+
+    function confirmClear() {
+      if (confirm("Bạn muốn xoá lịch sử?")) {
+        document.getElementById("history").innerHTML = "";
+      }
+    }
+
+    function copyResult() {
+      const text = document.getElementById("output").innerText;
+      navigator.clipboard.writeText(text).then(() => alert("Đã sao chép kết quả!"));
+    }
+  </script></body>
+</html>
