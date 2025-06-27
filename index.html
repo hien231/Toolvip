@@ -1,0 +1,175 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MD5VIP Tool</title>
+  <style>
+    body {
+      background-color: #001f33;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      padding: 20px;
+      border: 3px solid red;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #0f0;
+      margin: 20px;
+      position: relative;
+    }
+    .result-circles {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      transition: 0.3s;
+      box-shadow: 0 0 10px #0f0;
+    }
+    .circle.tai {
+      background-color: black;
+      color: white;
+    }
+    .circle.xiu {
+      background-color: white;
+      color: black;
+    }
+    .highlight {
+      animation: blink 0.3s infinite;
+      box-shadow: 0 0 20px #0f0;
+    }
+    @keyframes blink {
+      0%, 100% { box-shadow: 0 0 5px #0f0; }
+      50% { box-shadow: 0 0 20px #0f0; }
+    }
+    .predict-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 14px 30px;
+      font-size: 22px;
+      font-weight: bold;
+      background-color: #00cc66;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      box-shadow: 0 0 10px #0f0;
+      cursor: pointer;
+    }
+    .predict-btn:hover {
+      background-color: #00e676;
+    }
+    .output {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .history {
+      font-size: 13px;
+      margin-top: 20px;
+      background-color: rgba(255,255,255,0.1);
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: red;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+    }
+    .corners {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #0f0;
+    }
+    .corner1 { top: 0; left: 0; }
+    .corner2 { top: 0; right: 0; }
+    .corner3 { bottom: 0; left: 0; }
+    .corner4 { bottom: 0; right: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="delete-btn" onclick="confirmDelete()">X</div>
+    <div class="corners corner1"></div>
+    <div class="corners corner2"></div>
+    <div class="corners corner3"></div>
+    <div class="corners corner4"></div>
+    <input type="text" id="md5input" placeholder="Nhập mã MD5" style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 10px;" />
+    <button class="predict-btn" onclick="predict()">Dự đoán</button><div class="result-circles">
+  <div class="circle tai" id="taiCircle">Tài</div>
+  <div class="circle xiu" id="xiuCircle">Xỉu</div>
+</div>
+
+<div class="output" id="output"></div>
+<div class="history" id="history"></div>
+
+  </div><script>
+function getDice(sum) {
+  const results = [];
+  for (let i = 1; i <= 6; i++) {
+    for (let j = 1; j <= 6; j++) {
+      for (let k = 1; k <= 6; k++) {
+        if (i + j + k === sum) {
+          results.push([i, j, k]);
+        }
+      }
+    }
+  }
+  return results[Math.floor(Math.random() * results.length)] || [2, 2, 2];
+}
+
+function predict() {
+  const md5 = document.getElementById("md5input").value.trim();
+  if (!md5) return;
+
+  const value = parseInt(md5.slice(0, 2), 16) % 16 + 3;
+  const result = value >= 11 ? 'Tài' : 'Xỉu';
+  const percent = Math.floor(Math.random() * 20) + 80;
+  const dice = getDice(value);
+
+  document.getElementById("output").innerHTML = `${result} ${value} - ${percent}% (${dice.join(', ')})`;
+
+  const tai = document.getElementById("taiCircle");
+  const xiu = document.getElementById("xiuCircle");
+  tai.classList.remove("highlight");
+  xiu.classList.remove("highlight");
+  if (result === 'Tài') {
+    tai.classList.add("highlight");
+  } else {
+    xiu.classList.add("highlight");
+  }
+
+  const history = document.getElementById("history");
+  history.innerHTML = `${md5} → ${result} ${value} (${dice.join(', ')})<br>` + history.innerHTML;
+
+  document.getElementById("md5input").value = "";
+}
+
+function confirmDelete() {
+  if (confirm("Bạn có chắc chắn muốn xoá lịch sử?")) {
+    document.getElementById("history").innerHTML = "";
+  }
+}
+</script></body>
+</html>
