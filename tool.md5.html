@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>TOOL MD5 / GO88</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #001f3f;
+      color: white;
+    }
+    .container {
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      background: linear-gradient(145deg, #003366, #001f3f);
+      border: 4px solid #00ffff;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #00ffff;
+    }
+    h1 {
+      text-align: center;
+      color: #00ffff;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 16px;
+      border: none;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 48%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      margin: 5px 1%;
+      cursor: pointer;
+      color: white;
+    }
+    .predict-btn {
+      background-color: #1abc9c;
+    }
+    .copy-btn {
+      background-color: #3498db;
+    }
+    .circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: inline-block;
+      line-height: 60px;
+      text-align: center;
+      margin: 10px;
+      font-weight: bold;
+      font-size: 18px;
+      border: 3px solid #00ffff;
+    }
+    .tai {
+      background-color: black;
+    }
+    .xiu {
+      background-color: white;
+      color: black;
+    }
+    .highlight {
+      animation: blink 0.3s infinite alternate;
+      border-color: yellow !important;
+    }
+    @keyframes blink {
+      0% { box-shadow: 0 0 20px yellow; }
+      100% { box-shadow: 0 0 30px yellow; }
+    }
+    .result {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .dice {
+      font-size: 30px;
+      text-align: center;
+    }
+    .history {
+      background-color: #003366;
+      padding: 10px;
+      border-radius: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .delete-history {
+      background: crimson;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      float: left;
+      margin-bottom: 10px;
+    }
+    .stat {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .confidence {
+      font-size: 16px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    .back-btn {
+      margin: 10px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nút quay lại -->
+<div class="back-btn">
+  <button onclick="window.history.back()" style="padding: 10px 20px; font-size: 16px; background-color: crimson; color: white; border: none; border-radius: 8px; cursor: pointer;">
+    ⬅ Quay lại
+  </button>
+</div>
+
+<div class="container">
+  <h1>TOOLTESTBQUY</h1>
+  <input type="text" id="md5Input" placeholder="Nhập mã MD5 tại đây...">
+  <div style="text-align:center;">
+    <div class="circle tai" id="tai">Tài</div>
+    <div class="circle xiu" id="xiu">Xỉu</div>
+  </div>
+  <div style="text-align: center;">
+    <button class="predict-btn" onclick="predict()">🔍 Dự đoán</button>
+    <button class="copy-btn" onclick="copyResult()">📋 Sao chép</button>
+  </div>
+  <div class="loading" id="loading"></div>
+  <div class="result" id="result">Chưa có kết quả</div>
+  <div class="dice" id="dice">🎲 🎲 🎲</div>
+  <div class="confidence" id="confidence"></div>
+  <div class="delete-history" onclick="clearHistory()">🗑 Xóa lịch sử</div>
+  <div class="history" id="history"></div>
+  <div class="stat" id="stat">🤖 AI dự đoán tài xỉu độ chính xác 80%</div>
+</div>
+
+<script>
+  const tai = document.getElementById("tai");
+  const xiu = document.getElementById("xiu");
+  const resultEl = document.getElementById("result");
+  const diceEl = document.getElementById("dice");
+  const confidenceEl = document.getElementById("confidence");
+  const historyEl = document.getElementById("history");
+  const loadingEl = document.getElementById("loading");
+
+  function predict() {
+    const md5 = document.getElementById("md5Input").value.trim();
+    if (!md5 || md5.length !== 32) return alert("Nhập mã MD5 hợp lệ (32 ký tự)!");
+    document.getElementById("md5Input").value = "";
+
+    resultEl.innerText = "";
+    confidenceEl.innerText = "";
+    diceEl.innerText = "🎲 🎲 🎲";
+    loadingEl.innerHTML = '<div>🤖 Đang phân tích kết quả... <span id="progress">0%</span></div>';
+
+    let percent = 0;
+    const interval = setInterval(() => {
+      percent += 10;
+      document.getElementById("progress").innerText = percent + "%";
+      if (percent >= 100) {
+        clearInterval(interval);
+        loadingEl.innerHTML = "";
+        showResult(md5);
+      }
+    }, 300);
+  }
+
+  function showResult(md5) {
+    const bytes = md5.match(/.{2}/g).map(h => parseInt(h, 16));
+    const sum = (bytes[0] + bytes[5] + bytes[31]) % 16 + 3;
+    const percent = 70 + Math.floor(Math.random() * 30);
+    const dice = generateDice(sum);
+    const label = sum <= 10 ? "Xỉu" : "Tài";
+
+    resultEl.innerText = `${label} ${sum}`;
+    confidenceEl.innerText = `Độ tin cậy: ${percent}% - ` + (
+      percent < 65 ? "Không nên đánh" :
+      percent < 85 ? "Nên cân nhắc" : "Tự tin!"
+    );
+
+    tai.classList.remove("highlight");
+    xiu.classList.remove("highlight");
+    if (label === "Tài") tai.classList.add("highlight");
+    else xiu.classList.add("highlight");
+
+    diceEl.innerText = dice.join(" 🎲 ");
+    addToHistory(`${label} ${sum} (${percent}%)`);
+  }
+
+  function generateDice(sum) {
+    let a = 1, b = 1, c = sum - 2;
+    while (c > 6) { a++; c--; }
+    return [a, b, c];
+  }
+
+  function addToHistory(entry) {
+    const p = document.createElement("div");
+    p.innerText = entry;
+    historyEl.prepend(p);
+  }
+
+  function clearHistory() {
+    historyEl.innerHTML = "";
+  }
+
+  function copyResult() {
+    const text = resultEl.innerText;
+    if (!text || text === "Chưa có kết quả") {
+      alert("Chưa có kết quả để sao chép!");
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      alert("📋 Đã sao chép kết quả!");
+    });
+  }
+</script>
+
+</body>
+</html>

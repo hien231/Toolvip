@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quản lý tài khoản</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #001f3f;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    h2 {
+      color: #00ffff;
+    }
+    table {
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      border-collapse: collapse;
+      background: #003366;
+      box-shadow: 0 0 15px #00ffff;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #00ffff;
+    }
+    th {
+      background: #002244;
+    }
+    input[type="number"] {
+      width: 100px;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      padding: 6px 12px;
+      border: none;
+      background: #1abc9c;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .back-btn {
+      margin-top: 20px;
+      background: crimson;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔐 Quản lý tài khoản người dùng</h2>
+  <div id="userTableContainer"></div>
+  <button class="back-btn" onclick="location.href='index.html'">⬅ Quay lại</button>
+
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (currentUser !== "thanhhien231") {
+      alert("Chỉ admin mới có quyền truy cập trang này!");
+      location.href = "index.html";
+    }
+
+    function renderTable() {
+      let html = '<table><tr><th>Tài khoản</th><th>Số dư</th><th>Thêm tiền</th><th>Thao tác</th></tr>';
+      for (let username in users) {
+        if (username !== "thanhhien231") {
+          html += `<tr>
+            <td>${username}</td>
+            <td id="bal-${username}">${users[username].balance}</td>
+            <td><input type="number" id="amount-${username}" placeholder="VNĐ" /></td>
+            <td><button onclick="addMoney('${username}')">Thêm</button></td>
+          </tr>`;
+        }
+      }
+      html += '</table>';
+      document.getElementById("userTableContainer").innerHTML = html;
+    }
+
+    function addMoney(username) {
+      const amountInput = document.getElementById(`amount-${username}`);
+      const amount = parseInt(amountInput.value);
+      if (isNaN(amount) || amount <= 0) {
+        alert("Nhập số tiền hợp lệ!");
+        return;
+      }
+      users[username].balance = (users[username].balance || 0) + amount;
+      localStorage.setItem("users", JSON.stringify(users));
+      document.getElementById(`bal-${username}`).innerText = users[username].balance;
+      amountInput.value = "";
+      alert(`✅ Đã cộng ${amount} VNĐ cho ${username}`);
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

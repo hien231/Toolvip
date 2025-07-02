@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trang chính</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #001f3f;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      color: #00ffff;
+    }
+    #nav button {
+      background-color: #3498db;
+      border: none;
+      padding: 12px 20px;
+      margin: 10px;
+      font-size: 16px;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #nav button:hover {
+      background-color: #1abc9c;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🔐 TOOL AI Tài/Xỉu</h1>
+
+  <div id="welcome" style="margin-bottom: 20px;"></div>
+  <div id="nav"></div>
+
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    const users = JSON.parse(localStorage.getItem("users")) || {};
+
+    if (!currentUser || !users[currentUser]) {
+      alert("Chưa đăng nhập!");
+      location.href = "login.html";
+    } else {
+      const userData = users[currentUser];
+      document.getElementById("welcome").innerText = `👋 Xin chào ${currentUser.toUpperCase()}!`;
+
+      if (currentUser === "thanhhien231") {
+        // Giao diện admin
+        document.getElementById("nav").innerHTML = `
+          <button onclick="location.href='tool.md5.html'">🔍 Tool MD5</button>
+          <button onclick="location.href='go88.html'">🎮 Go88</button>
+          <button onclick="location.href='sunwin.html'">🎰 Sunwin</button>
+          <button onclick="location.href='admin.html'">🛠 Quản lý tài khoản</button>
+          <button onclick="logout()">🚪 Đăng xuất</button>
+        `;
+      } else {
+        // Giao diện người dùng thường
+        document.getElementById("nav").innerHTML = `
+          <button onclick="location.href='tool.md5.html'">🔍 Tool MD5</button>
+          <button onclick="location.href='go88.html'">🎮 Go88</button>
+          <button onclick="location.href='sunwin.html'">🎰 Sunwin</button>
+          <button onclick="location.href='nap.html'">💳 Nạp tiền</button>
+          <button onclick="location.href='profile.html'">👤 Hồ sơ</button>
+          <button onclick="logout()">🚪 Đăng xuất</button>
+        `;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

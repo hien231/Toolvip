@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký tài khoản</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: linear-gradient(135deg, #001f3f, #003366);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      color: white;
+    }
+    .card {
+      background: #002b5c;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px #00ffff;
+    }
+    h2 {
+      text-align: center;
+      color: #00ffff;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3498db;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .link {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .link a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>📝 Đăng ký</h2>
+    <input type="text" id="regUsername" placeholder="Tên tài khoản">
+    <input type="password" id="regPassword" placeholder="Mật khẩu">
+    <button onclick="register()">Tạo tài khoản</button>
+    <div class="link">Đã có tài khoản? <a href="login.html">Đăng nhập</a></div>
+    <div class="error" id="regError"></div>
+  </div>
+
+  <script>
+    function register() {
+      const user = document.getElementById("regUsername").value.trim();
+      const pass = document.getElementById("regPassword").value.trim();
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+      if (!user || !pass) {
+        document.getElementById("regError").innerText = "Vui lòng nhập đầy đủ!";
+        return;
+      }
+
+      if (users[user]) {
+        document.getElementById("regError").innerText = "Tài khoản đã tồn tại!";
+        return;
+      }
+
+      users[user] = { password: pass, balance: 0, tools: [] };
+      localStorage.setItem("users", JSON.stringify(users));
+      alert("Tạo tài khoản thành công!");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

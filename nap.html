@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Nạp tiền</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #001f3f;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .card {
+      background: #003366;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 20px #00ffff;
+    }
+    h2 {
+      color: #00ffff;
+    }
+    .info {
+      margin-top: 20px;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .qr {
+      margin: 20px 0;
+    }
+    .back-btn {
+      margin-top: 20px;
+      background: crimson;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+    .copy-btn {
+      background: #1abc9c;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>💳 Nạp tiền</h2>
+    <div class="info">
+      <p><strong>Chủ tài khoản:</strong> Mai Thanh Hiền</p>
+      <p><strong>Ngân hàng:</strong> MB Bank</p>
+      <p><strong>Số tài khoản:</strong> 0369375038</p>
+      <p><strong>Nội dung chuyển khoản:</strong> <span id="content" style="color: yellow;"></span></p>
+      <button class="copy-btn" onclick="copyContent()">📋 Sao chép nội dung</button>
+    </div>
+    <div class="qr">
+      <img id="qrImage" src="" alt="QR Code" width="250" height="250" style="border: 4px solid #00ffff; border-radius: 10px;" />
+    </div>
+    <button class="back-btn" onclick="location.href='index.html'">⬅ Quay lại</button>
+  </div>
+
+  <script>
+    function randomString(length) {
+      const chars = 'abcdefghijklmnopqrstuvwxyz';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return result;
+    }
+
+    const noiDung = randomString(6);
+    document.getElementById("content").innerText = noiDung;
+
+    // Tạo link QR VietQR
+    const stk = '0369375038';
+    const bank = 'MB';
+    const name = 'MAI THANH HIEN';
+    const amount = ''; // Để trống nếu không bắt buộc số tiền
+    const qrURL = `https://img.vietqr.io/image/${bank}-${stk}-compact.png?amount=${amount}&addInfo=${noiDung}&accountName=${encodeURIComponent(name)}`;
+
+    document.getElementById("qrImage").src = qrURL;
+
+    function copyContent() {
+      navigator.clipboard.writeText(noiDung).then(() => {
+        alert("📋 Đã sao chép nội dung giao dịch!");
+      });
+    }
+  </script>
+</body>
+</html>

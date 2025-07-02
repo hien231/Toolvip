@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Hồ sơ tài khoản</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #001f3f;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .card {
+      background: #003366;
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 20px #00ffff;
+    }
+    h2 {
+      color: #00ffff;
+    }
+    .info {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .back-btn {
+      margin-top: 20px;
+      background: crimson;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>👤 Hồ sơ tài khoản</h2>
+    <div class="info">
+      <p><strong>Tài khoản:</strong> <span id="username"></span></p>
+      <p><strong>Số dư:</strong> <span id="balance"></span> VNĐ</p>
+    </div>
+    <button class="back-btn" onclick="location.href='index.html'">⬅ Quay lại</button>
+  </div>
+
+  <script>
+    const user = localStorage.getItem("currentUser");
+    const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+    if (!user || !users[user]) {
+      alert("Vui lòng đăng nhập lại!");
+      location.href = "login.html";
+    } else {
+      document.getElementById("username").innerText = user;
+      document.getElementById("balance").innerText = users[user].balance || 0;
+    }
+  </script>
+</body>
+</html>
